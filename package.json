@@ -1,0 +1,32 @@
+{
+  "name": "vue-page-animation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linfenpan/vue-page-animation.git"
+  },
+  "author": "da宗熊",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/linfenpan/vue-page-animation/issues"
+  },
+  "homepage": "https://github.com/linfenpan/vue-page-animation#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "css-loader": "^0.28.8",
+    "vue-loader": "^13.7.0",
+    "vue-template-compiler": "^2.5.13",
+    "webpack": "^3.10.0"
+  },
+  "dependencies": {
+    "vue": "^2.5.13",
+    "vue-router": "^3.0.1"
+  }
+}
