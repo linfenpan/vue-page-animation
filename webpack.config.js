@@ -1,5 +1,6 @@
 'use strict';
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   entry: {
@@ -29,7 +30,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['css-loader'],
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.vue$/,
@@ -37,10 +38,17 @@ module.exports = {
         exclude: /node_modules/,
         options: {
           loaders: {
-            css: ['css-loader'],
+            css: ['style-loader', 'css-loader'],
           },
         },
       }
     ],
   },
+
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'lib',
+      filename: 'lib.js',
+    }),
+  ]
 };
