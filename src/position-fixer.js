@@ -1,7 +1,7 @@
 'use strict';
 
 export default class PositionFixer {
-  constructor({ clsLock: 'vue-body-lock' }) {
+  constructor({ clsLock = 'vue-page-animation-lock' }) {
     this.clsLock = clsLock;
     this.elBody = document.body || document.getElementsByTagName('body')[0];
   }
@@ -12,14 +12,23 @@ export default class PositionFixer {
   }
 
   // 解锁滚动
-  unloackScroll() {
+  unlockScroll() {
     this.elBody.classList.remove(this.clsLock);
   }
 
   // 修正元素的位置
   fixElementPos($el, pos) {
     $el.org_top = $el.style.top;
-    $el.style.top = pos + 'px';
-    return { clear() { $el.style.top = $el.org_top; $el.org_top = null; } };
+    $el.style.top = (0 - pos) + 'px';
+    return {
+      clear(isFixWindowScroll) {
+        const top = $el.org_top;
+        $el.style.top = top;
+        $el.org_top = null;
+        if (isFixWindowScroll) {
+          window.scrollTo(0, pos || 0);
+        }
+      }
+    };
   }
 }

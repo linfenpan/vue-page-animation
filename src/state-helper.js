@@ -55,6 +55,11 @@ export default class StateHelper {
     return this.posMap[key];
   }
 
+  getLastPosition() {
+    const key = isSupportHistoryApi ? this.lastState.rid : this.lastUri;
+    return this.posMap[key];
+  }
+
   saveLastPosition(pos) {
     const key = isSupportHistoryApi ? this.lastState.rid : this.lastUri;
     this.posMap[key] = pos || 0;

@@ -1,8 +1,16 @@
 <template lang="html">
   <div class="vue-page-animation">
-    <transition :name="transitionName">
+    <transition
+      :name="transitionName"
+      @before-leave="beforeLeave"
+      @before-enter="beforeEnter"
+      @after-leave="afterLeave"
+      @after-enter="afterEnter"
+      @enter-cancelled="cancelAnimation"
+      @leave-cancelled="cancelAnimation"
+      >
       <keep-alive>
-        <router-view class="child-view"></router-view>
+        <router-view class="vue-page-animation-router-view"></router-view>
       </keep-alive>
     </transition>
   </div>
@@ -24,6 +32,8 @@
 */
 
 import { isSupportHistoryApi } from './config';
+import PositionFixer from './position-fixer';
+import StateHelper from './state-helper';
 
 export default {
   data() {
@@ -34,42 +44,106 @@ export default {
     return { transitionMode: '', transitionName: '' };
   },
 
-  beforeRouteLeave(to, from, next) {
-    console.log('leave', location.href);
-    next();
+  created() {
+    this.positionFixer = new PositionFixer({});
+    this.stateHelper = new StateHelper({ clsLock: 'vue-page-animation-lock' });
   },
 
+  // TODO 考虑一下，用 watch 来代替吧，这个方法，看着就坑啦~~~~
+  // watch 的时候，判断一下，当前组件是否 created/beforeDestroy, activated/deactivated
   beforeRouteUpdate(to, from, next) {
-    console.log('update', location.href);
-    let isBack = this.$router.isBack;
-    if (isBack) {
-      this.transitionName = 'slide-right';
-    } else {
-      this.transitionName = 'slide-left';
-    }
-    this.$router.isBack = false;
+    const lastScrollY = window.scrollY || document.body.scrollTop;
     next();
+
+    const stateHelper = this.stateHelper;
+    const positionFixer = this.positionFixer;
+    stateHelper.update();
+    stateHelper.saveLastPosition(lastScrollY);
+
+    let transitionName = this.transitionMode || '';
+
+    if (!transitionName) {
+      if (stateHelper.isPageBack()) {
+        transitionName = 'vue-page-animation-right';
+      } else if (stateHelper.isPageForward()) {
+        transitionName = 'vue-page-animation-left';
+      } else {
+        transitionName = 'vue-page-animation-fade';
+      }
+    }
+
+    this.transitionName = transitionName;
   },
+
+  methods: {
+    beforeLeave(el) {
+      const positionFixer = this.positionFixer;
+      const stateHelper = this.stateHelper;
+
+      positionFixer.lockScroll();
+      this._leaveFixer = positionFixer.fixElementPos(el, stateHelper.getLastPosition() || 0);
+    },
+    beforeEnter(el) {
+      const positionFixer = this.positionFixer;
+      const stateHelper = this.stateHelper;
+
+      positionFixer.lockScroll();
+      this._enterFixer = positionFixer.fixElementPos(el, stateHelper.getCurrentPosition() || 0);
+    },
+    afterLeave() {
+      this._leaveFixer && this._leaveFixer.clear();
+      this._leaveFixer = null;
+    },
+    afterEnter() {
+      const positionFixer = this.positionFixer;
+      positionFixer.unlockScroll();
+
+      const isFixWindowScroll = true;
+      this._enterFixer && this._enterFixer.clear(isFixWindowScroll);
+      this._enterFixer = null;
+    },
+    cancelAnimation() {
+      this.afterLeave();
+      this.afterEnter();
+    }
+  }
 }
 </script>
 
 <style lang="css">
-  .vue-page-animation {
-
+  .vue-page-animation-lock {
+    position: fixed;
+    width: 100%;
+    overflow-y: scroll;
   }
 
-  .child-view {
+  /* 因为 position: fixed 与 transform 配合使用，会导致 position: fixed 失效的，所以只能用 left 动画代替 */
+  .vue-page-animation-router-view {
     width: 100%;
     position: absolute;
-    transition: all .8s cubic-bezier(.55,0,.1,1);
+    left: 0;
+    -webkit-transition-duration: .5s;
+    transition-duration: .5s;
+    -webkit-transition-property: left, opacity;
+    transition-property: left, opacity;
+    -webkit-transition-timing-function: ease;
+            transition-timing-function: ease;
+    /* transition-timing-function: cubic-bezier(.55,0,.1,1); */
   }
 
-  .slide-left-enter, .slide-right-leave-active {
+  .vue-page-animation-left-enter, .vue-page-animation-right-leave-active {
     opacity: 0;
-    transform: translate(50px, 0);
+    left: 50px;
+    /* transform: translate(50px, 0); */
   }
-  .slide-left-leave-active, .slide-right-enter {
+
+  .vue-page-animation-left-leave-active, .vue-page-animation-right-enter {
     opacity: 0;
-    transform: translate(-50px, 0);
+    left: -50px;
+    /* transform: translate(-50px, 0); */
+  }
+
+  .vue-page-animation-fade-enter, .vue-page-animation-fade-leave-active {
+    opacity: 0;
   }
 </style>
