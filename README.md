@@ -5,7 +5,7 @@
 
 ![images/preview.gif](images/preview.gif)
 
-可下载此项目，打开 `test.html`，观看具体效果。
+可下载此项目，打开 `test.html`，点击浏览器的前进、后退按钮，观看具体效果。
 
 ## 使用
 
