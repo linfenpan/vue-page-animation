@@ -7,6 +7,7 @@
 
 可下载此项目，打开 `test.html`，点击浏览器的前进、后退按钮，观看具体效果。
 
+
 ## 使用
 
 使用前，请确保项目内，已经使用了 `vue-loader`。
@@ -55,6 +56,7 @@ export default {
 ```
 页面在 进入或后退 进入时，默认滚动 `20px` 距离
 
+
 ## 关于 `scrollBehavior`
 `scrollBehavior`，它是 `vue-router` 中，记录滚动位置的方法，用法如下:
 
@@ -83,23 +85,30 @@ const router = new Router({
 ## 实现原理
 
 判断前进和后退:
-1. 使用 history api 保存页面信息，如果不支持此 api，则放弃判断，使用 fade 动画
-* history.state.rid 页面的唯一 id，此 id 的值是请求的时间，所以通过 id 大小的判断，就可以知道是前进还是后退了
-* 记录滚动位置的 map 对象，使用 history.state.rid 作为 key 值，如果不支持 history api，则使用 url 作为 key 值
+ 1. 使用 history api 保存页面信息，如果不支持此 api，则放弃判断，使用 fade 动画
+ 2. history.state.rid 页面的唯一 id，此 id 的值是请求的时间，所以通过 id 大小的判断，就可以知道是前进还是后退了
+ 3. 记录滚动位置的 map 对象，使用 history.state.rid 作为 key 值，如果不支持 history api，则使用 url 作为 key 值
 
 修复滚动轴位置:
-1. 在动画前，锁定body层的滚动轴
-* 如何锁定滚动轴？给 body 设置 position: fixed; width: 100%; overflow-y: scroll;
-* 然后，给当前离开的页面，修正 top 的位置
-* 同时，获取正在进入的页面的滚动距离，并修正 top 的位置
-* 待动画结束后，删除 body 的样式，同时，删除正在进入、离开元素的 top 属性，同时修正滚动轴的位置
+ 1. 在动画前，锁定body层的滚动轴
+ 2. 如何锁定滚动轴？给 body 设置 position: fixed; width: 100%; overflow-y: scroll;
+ 3. 然后，给当前离开的页面，修正 top 的位置
+ 4. 同时，获取正在进入的页面的滚动距离，并修正 top 的位置
+ 5. 待动画结束后，删除 body 的样式，同时，删除正在进入、离开元素的 top 属性，同时修正滚动轴的位置
 
 如何获取页面切换前，滚动轴的位置？
-1. 方法一: 监听 window.onscroll，定时记录滚动轴的位置
-2. 方法二: router.beforeEach 方法，在动画前，记录下滚动轴的位置
+ 1. 方法一: 监听 window.onscroll，定时记录滚动轴的位置
+ 2. 方法二: router.beforeEach 方法，在动画前，记录下滚动轴的位置
 
 不能在 `popstate` 时记录，因为 `vue-router` 是可能走 `hash` 形式的。
 
 最终，此组件选择了方式二的变种，`router` 对象中，有一个 `beforeHooks` 属性，此属性记录了所有 `router.beforeEach` 添加的函数钩子。
 
 组件里，通过`this.$router.beforeHooks.push()`的形式，加入新的函数钩子。同时，在组件销毁、不可见时，通过`this.$router.beforeHooks.splice()`方式，移除函数钩子。
+
+
+## 入坑须知
+ 1. 因用到 position:fixed，所以组件的动画，是 top 和 opacity 切换，性能上会有些许影响。如确保不会使用到 position:fixed，请果断使用 transform 动画。
+ 2. 修正 top 时，偶尔会有 1px 的抖动，有大神来指点一下吗？
+ 3. 如果某天 `vue-router` 把 `beforeHooks` 干掉了，就只能与 `router.beforeEach` 玩耍了
+ 4. 此项目木有测试同学参与，木有测试同学参与，木有测试同学参与
