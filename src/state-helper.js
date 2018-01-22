@@ -1,12 +1,14 @@
 'use stirct';
 import { isSupportHistoryApi } from './config';
 
-/*
-判断左右切换:
-1. 通过 history api，来保存上一页、下一页的信息，如果不支持，就一切都 sayGoodBye 吧
-2. history.state.rtime 记录此页面的请求时间，通过时间来判定切换动画
-3. history.state.rid 记录下此页面的唯一 id，滚动距离之类的，都通过此 id 进行记录
-*/
+function merge(a, b) {
+  for (const k in b) {
+    if (b.hasOwnProperty(k)) {
+      a[k] = b[k];
+    }
+  }
+  return a;
+}
 
 export default class StateHelper {
   constructor() {
@@ -22,7 +24,9 @@ export default class StateHelper {
   }
 
   update() {
-    const state = Object.assign({}, history.state || {});
+    // const state = Object.assign({}, history.state || {}); // es6 手机支持不够友好呢
+    const state = merge({}, history.state || {});
+
     if (!state.rid) {
       state.rid = new Date/1;
       history.replaceState(state, null);
@@ -43,11 +47,11 @@ export default class StateHelper {
   }
 
   isPageBack() {
-    return this.state.rid < this.lastState.rid;
+    return isSupportHistoryApi ? this.state.rid < this.lastState.rid : false;
   }
 
   isPageForward() {
-    return this.state.rid > this.lastState.rid;
+    return isSupportHistoryApi ? this.state.rid > this.lastState.rid : false;
   }
 
   getCurrentPosition() {

@@ -1,8 +1,8 @@
 {
   "name": "vue-page-animation",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "vue-router页面切换动画组件",
+  "main": "src/vue-page-animation.vue",
   "scripts": {
     "dev": "webpack --watch"
   },

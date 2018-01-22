@@ -21,12 +21,12 @@ export default class PositionFixer {
     $el.org_top = $el.style.top;
     $el.style.top = (0 - pos) + 'px';
     return {
-      clear(isFixWindowScroll) {
+      clear(isFixWindowScroll, scrollY) {
         const top = $el.org_top;
         $el.style.top = top;
         $el.org_top = null;
         if (isFixWindowScroll) {
-          window.scrollTo(0, pos || 0);
+          window.scrollTo(0, scrollY != null ? scrollY : pos || 0);
         }
       }
     };

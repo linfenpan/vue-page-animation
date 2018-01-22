@@ -1,15 +1,19 @@
 <template>
   <div class="app">
-    <router-view></router-view>
+    <VuePageAnimation>
+      <keep-alive>
+        <router-view class="vue-page-animation-router-view"></router-view>
+      </keep-alive>
+    </VuePageAnimation>
   </div>
 </template>
 
 <script>
-import AppEntry from '@/page/app-entry';
+import VuePageAnimation from '@/src/vue-page-animation';
 
 export default {
   components: {
-    AppEntry
+    VuePageAnimation
   },
 }
 </script>

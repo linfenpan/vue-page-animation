@@ -6,7 +6,7 @@ module.exports = {
   entry: {
     lib: ['vue', 'vue-router'],
     page: './page/index',
-    main: './src/vue-page-animation'
+    // main: './src/vue-page-animation'
   },
 
   output: {
