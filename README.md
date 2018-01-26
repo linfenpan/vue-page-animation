@@ -112,3 +112,4 @@ const router = new Router({
  2. 修正 top 时，偶尔会有 1px 的抖动，有大神来指点一下吗？
  3. 如果某天 `vue-router` 把 `beforeHooks` 干掉了，就只能与 `router.beforeEach` 玩耍了
  4. 此项目木有测试同学参与，木有测试同学参与，木有测试同学参与
+ 5. 多说一句，如果使用的不是 body 层的滚动，而是 div 的内部滚动，请不要修正任何滚动位置，`keep-alive` 能 完美保存滚动位置的
