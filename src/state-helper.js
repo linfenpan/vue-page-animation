@@ -11,12 +11,13 @@ function merge(a, b) {
 }
 
 export default class StateHelper {
-  constructor() {
+  constructor(posSaveByUri) {
     this.posMap = {};
 
     this.lastState = null;
     this.state = null;
 
+    this.posSaveByUri = !!posSaveByUri;
     this.lastUri = '';
     this.uri = '';
 
@@ -24,7 +25,6 @@ export default class StateHelper {
   }
 
   update() {
-    // const state = Object.assign({}, history.state || {}); // es6 手机支持不够友好呢
     const state = merge({}, history.state || {});
 
     if (!state.rid) {
@@ -55,17 +55,20 @@ export default class StateHelper {
   }
 
   getCurrentPosition() {
-    const key = isSupportHistoryApi ? this.state.rid : this.uri;
+    let key = isSupportHistoryApi ? this.state.rid : this.uri;
+    if (this.posSaveByUri) { key = this.uri; }
     return this.posMap[key];
   }
 
   getLastPosition() {
-    const key = isSupportHistoryApi ? this.lastState.rid : this.lastUri;
+    let key = isSupportHistoryApi ? this.lastState.rid : this.lastUri;
+    if (this.posSaveByUri) { key = this.lastUri; }
     return this.posMap[key];
   }
 
   saveLastPosition(pos) {
-    const key = isSupportHistoryApi ? this.lastState.rid : this.lastUri;
+    let key = isSupportHistoryApi ? this.lastState.rid : this.lastUri;
+    if (this.posSaveByUri) { key = this.lastUri; }
     this.posMap[key] = pos || 0;
   }
 }

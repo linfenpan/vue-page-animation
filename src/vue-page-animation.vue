@@ -15,6 +15,8 @@
 </template>
 
 <script>
+/** @see https://github.com/linfenpan/vue-page-animation */
+
 import { isSupportHistoryApi } from './config';
 import PositionFixer from './position-fixer';
 import StateHelper from './state-helper';
@@ -24,7 +26,15 @@ import StateHelper from './state-helper';
   transitionName: 是决定左、右、透明 动画
 */
 export default {
-  props: ['forceTransitionName'],
+  props: {
+    forceTransitionName: {
+      default: ''
+    },
+    // 链接驱动保存位置吗
+    driveByUrl: {
+      default: false
+    },
+  },
 
   data() {
     return { transitionName: 'vue-page-animation-fade' };
@@ -32,7 +42,7 @@ export default {
 
   created() {
     this.positionFixer = new PositionFixer({});
-    this.stateHelper = new StateHelper({ clsLock: 'vue-page-animation-lock' });
+    this.stateHelper = new StateHelper(this.driveByUrl);
     this.watchRouter();
   },
 
@@ -64,11 +74,13 @@ export default {
 
       if (!this._unwatchRouter) {
         this._unwatchRouter = this.$watch('$route', (to, from) => {
+          if (!this._isWatchingRouter) { return; }
           // 触发这个函数时，history.state 的值，已经更变了，浏览器的高度，也被重置了
           // 唯一的困难，就是把变化前的浏览器高度，给弄回来~~~
           const lastScrollY = this._lastScrollY || 0;
           const stateHelper = this.stateHelper;
           const positionFixer = this.positionFixer;
+          
           stateHelper.update();
           stateHelper.saveLastPosition(lastScrollY);
 
@@ -87,6 +99,8 @@ export default {
           this.transitionName = transitionName;
         });
       }
+
+      this._isWatchingRouter = true;
     },
 
     unwatchRouter() {
@@ -100,7 +114,7 @@ export default {
         this._calculateScroll = null;
       }
 
-      this._unwatchRouter && this._unwatchRouter();
+      this._isWatchingRouter = false;
     },
 
     beforeLeave(el) {
@@ -168,8 +182,8 @@ export default {
     position: absolute;
     left: 0;
     will-change: left, opacity;
-    -webkit-transition-duration: .3s;
-    transition-duration: .3s;
+    -webkit-transition-duration: .2s;
+    transition-duration: .2s;
     -webkit-transition-property: left, opacity;
     transition-property: left, opacity;
     -webkit-transition-timing-function: cubic-bezier(.55,0,.1,1);

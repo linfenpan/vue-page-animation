@@ -4,7 +4,7 @@
   "description": "vue-router页面切换动画组件",
   "main": "src/vue-page-animation.vue",
   "scripts": {
-    "dev": "webpack --watch"
+    "dev": "node_modules/.bin/webpack --watch"
   },
   "repository": {
     "type": "git",

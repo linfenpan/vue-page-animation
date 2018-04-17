@@ -137,7 +137,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(22);
+var	fixUrls = __webpack_require__(20);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -576,7 +576,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _vuePageAnimation = __webpack_require__(25);
+var _vuePageAnimation = __webpack_require__(21);
 
 var _vuePageAnimation2 = _interopRequireDefault(_vuePageAnimation);
 
@@ -598,9 +598,7 @@ exports.default = {
 //
 
 /***/ }),
-/* 8 */,
-/* 9 */,
-/* 10 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -610,13 +608,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _config = __webpack_require__(11);
+var _config = __webpack_require__(9);
 
-var _positionFixer = __webpack_require__(28);
+var _positionFixer = __webpack_require__(24);
 
 var _positionFixer2 = _interopRequireDefault(_positionFixer);
 
-var _stateHelper = __webpack_require__(29);
+var _stateHelper = __webpack_require__(25);
 
 var _stateHelper2 = _interopRequireDefault(_stateHelper);
 
@@ -627,14 +625,22 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   transitionName: 是决定左、右、透明 动画
 */
 exports.default = {
-  props: ['forceTransitionName'],
+  props: {
+    forceTransitionName: {
+      default: ''
+    },
+    // 链接驱动保存位置吗
+    driveByUrl: {
+      default: false
+    }
+  },
 
   data: function data() {
     return { transitionName: 'vue-page-animation-fade' };
   },
   created: function created() {
     this.positionFixer = new _positionFixer2.default({});
-    this.stateHelper = new _stateHelper2.default({ clsLock: 'vue-page-animation-lock' });
+    this.stateHelper = new _stateHelper2.default(this.driveByUrl);
     this.watchRouter();
   },
   beforeDestroy: function beforeDestroy() {
@@ -666,11 +672,15 @@ exports.default = {
 
       if (!this._unwatchRouter) {
         this._unwatchRouter = this.$watch('$route', function (to, from) {
+          if (!_this._isWatchingRouter) {
+            return;
+          }
           // 触发这个函数时，history.state 的值，已经更变了，浏览器的高度，也被重置了
           // 唯一的困难，就是把变化前的浏览器高度，给弄回来~~~
           var lastScrollY = _this._lastScrollY || 0;
           var stateHelper = _this.stateHelper;
           var positionFixer = _this.positionFixer;
+
           stateHelper.update();
           stateHelper.saveLastPosition(lastScrollY);
 
@@ -689,6 +699,8 @@ exports.default = {
           _this.transitionName = transitionName;
         });
       }
+
+      this._isWatchingRouter = true;
     },
     unwatchRouter: function unwatchRouter() {
       // @notcie 如果通过 beforeEach 添加的钩子，则可以把这个 if 判断删除
@@ -701,7 +713,7 @@ exports.default = {
         this._calculateScroll = null;
       }
 
-      this._unwatchRouter && this._unwatchRouter();
+      this._isWatchingRouter = false;
     },
     beforeLeave: function beforeLeave(el) {
       var positionFixer = this.positionFixer;
@@ -763,6 +775,70 @@ exports.default = {
 //
 //
 
+/** @see https://github.com/linfenpan/vue-page-animation */
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var isSupportHistoryApi = exports.isSupportHistoryApi = 'state' in history && 'replaceState' in history;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+exports.default = {
+  methods: {
+    back: function back() {
+      history.back();
+    }
+  }
+};
+
 /***/ }),
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -773,7 +849,49 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var isSupportHistoryApi = exports.isSupportHistoryApi = 'state' in history && 'replaceState' in history;
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+exports.default = {
+  methods: {
+    back: function back() {
+      history.back();
+    }
+  }
+};
 
 /***/ }),
 /* 12 */
@@ -803,19 +921,6 @@ Object.defineProperty(exports, "__esModule", {
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 exports.default = {
   methods: {
@@ -826,101 +931,10 @@ exports.default = {
 };
 
 /***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-exports.default = {
-  methods: {
-    back: function back() {
-      history.back();
-    }
-  }
-};
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-exports.default = {
-  methods: {
-    back: function back() {
-      history.back();
-    }
-  }
-};
-
-/***/ }),
+/* 13 */,
+/* 14 */,
 /* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -938,11 +952,11 @@ var _vueRouter = __webpack_require__(5);
 
 var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
-var _App = __webpack_require__(19);
+var _App = __webpack_require__(17);
 
 var _App2 = _interopRequireDefault(_App);
 
-var _router = __webpack_require__(32);
+var _router = __webpack_require__(28);
 
 var _router2 = _interopRequireDefault(_router);
 
@@ -966,7 +980,7 @@ var app = new _vue2.default({
 exports.default = app;
 
 /***/ }),
-/* 19 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -974,11 +988,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__);
 /* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3a78ca7c_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3a78ca7c_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(27);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(20)
+  __webpack_require__(18)
 }
 var normalizeComponent = __webpack_require__(2)
 /* script */
@@ -1024,13 +1038,13 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 20 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(21);
+var content = __webpack_require__(19);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -1055,7 +1069,7 @@ if(false) {
 }
 
 /***/ }),
-/* 21 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(false);
@@ -1069,7 +1083,7 @@ exports.push([module.i, "\n* {\n  padding: 0;\n  margin: 0;\n  box-sizing: borde
 
 
 /***/ }),
-/* 22 */
+/* 20 */
 /***/ (function(module, exports) {
 
 
@@ -1164,21 +1178,19 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 23 */,
-/* 24 */,
-/* 25 */
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_vue_page_animation_vue__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_vue_page_animation_vue__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_vue_page_animation_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_vue_page_animation_vue__);
 /* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_vue_page_animation_vue__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_vue_page_animation_vue__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_007bee73_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_vue_page_animation_vue__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_007bee73_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_vue_page_animation_vue__ = __webpack_require__(26);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(26)
+  __webpack_require__(22)
 }
 var normalizeComponent = __webpack_require__(2)
 /* script */
@@ -1224,13 +1236,13 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 26 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(27);
+var content = __webpack_require__(23);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -1255,7 +1267,7 @@ if(false) {
 }
 
 /***/ }),
-/* 27 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(false);
@@ -1263,13 +1275,13 @@ exports = module.exports = __webpack_require__(0)(false);
 
 
 // module
-exports.push([module.i, "\n.vue-page-animation-lock {\n  position: fixed;\n  width: 100%;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n/* @notice 因为 position: fixed 与 transform 配合使用，会导致 position: fixed 失效的，所以只能用 left 动画代替 */\n/* 如果没有 position:fixed 的元素，请果断使用 transform 动画~ */\n.vue-page-animation-router-view {\n  width: 100%;\n  position: absolute;\n  left: 0;\n  will-change: left, opacity;\n  -webkit-transition-duration: .3s;\n  transition-duration: .3s;\n  -webkit-transition-property: left, opacity;\n  transition-property: left, opacity;\n  -webkit-transition-timing-function: cubic-bezier(.55,0,.1,1);\n          transition-timing-function: cubic-bezier(.55,0,.1,1);\n}\n.vue-page-animation-left-enter, .vue-page-animation-right-leave-active {\n  opacity: 0;\n  left: 20px;\n}\n.vue-page-animation-left-leave-active, .vue-page-animation-right-enter {\n  opacity: 0;\n  left: -20px;\n}\n.vue-page-animation-fade-enter, .vue-page-animation-fade-leave-active {\n  opacity: 0;\n}\n", ""]);
+exports.push([module.i, "\n.vue-page-animation-lock {\n  position: fixed;\n  width: 100%;\n  overflow-y: scroll;\n  overflow-x: hidden;\n}\n\n/* @notice 因为 position: fixed 与 transform 配合使用，会导致 position: fixed 失效的，所以只能用 left 动画代替 */\n/* 如果没有 position:fixed 的元素，请果断使用 transform 动画~ */\n.vue-page-animation-router-view {\n  width: 100%;\n  position: absolute;\n  left: 0;\n  will-change: left, opacity;\n  -webkit-transition-duration: .2s;\n  transition-duration: .2s;\n  -webkit-transition-property: left, opacity;\n  transition-property: left, opacity;\n  -webkit-transition-timing-function: cubic-bezier(.55,0,.1,1);\n          transition-timing-function: cubic-bezier(.55,0,.1,1);\n}\n.vue-page-animation-left-enter, .vue-page-animation-right-leave-active {\n  opacity: 0;\n  left: 20px;\n}\n.vue-page-animation-left-leave-active, .vue-page-animation-right-enter {\n  opacity: 0;\n  left: -20px;\n}\n.vue-page-animation-fade-enter, .vue-page-animation-fade-leave-active {\n  opacity: 0;\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 28 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1337,7 +1349,7 @@ var PositionFixer = function () {
 exports.default = PositionFixer;
 
 /***/ }),
-/* 29 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1350,7 +1362,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _config = __webpack_require__(11);
+var _config = __webpack_require__(9);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1364,7 +1376,7 @@ function merge(a, b) {
 }
 
 var StateHelper = function () {
-  function StateHelper() {
+  function StateHelper(posSaveByUri) {
     _classCallCheck(this, StateHelper);
 
     this.posMap = {};
@@ -1372,6 +1384,7 @@ var StateHelper = function () {
     this.lastState = null;
     this.state = null;
 
+    this.posSaveByUri = !!posSaveByUri;
     this.lastUri = '';
     this.uri = '';
 
@@ -1381,7 +1394,6 @@ var StateHelper = function () {
   _createClass(StateHelper, [{
     key: 'update',
     value: function update() {
-      // const state = Object.assign({}, history.state || {}); // es6 手机支持不够友好呢
       var state = merge({}, history.state || {});
 
       if (!state.rid) {
@@ -1416,18 +1428,27 @@ var StateHelper = function () {
     key: 'getCurrentPosition',
     value: function getCurrentPosition() {
       var key = _config.isSupportHistoryApi ? this.state.rid : this.uri;
+      if (this.posSaveByUri) {
+        key = this.uri;
+      }
       return this.posMap[key];
     }
   }, {
     key: 'getLastPosition',
     value: function getLastPosition() {
       var key = _config.isSupportHistoryApi ? this.lastState.rid : this.lastUri;
+      if (this.posSaveByUri) {
+        key = this.lastUri;
+      }
       return this.posMap[key];
     }
   }, {
     key: 'saveLastPosition',
     value: function saveLastPosition(pos) {
       var key = _config.isSupportHistoryApi ? this.lastState.rid : this.lastUri;
+      if (this.posSaveByUri) {
+        key = this.lastUri;
+      }
       this.posMap[key] = pos || 0;
     }
   }]);
@@ -1438,7 +1459,7 @@ var StateHelper = function () {
 exports.default = StateHelper;
 
 /***/ }),
-/* 30 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1482,7 +1503,7 @@ if (false) {
 }
 
 /***/ }),
-/* 31 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1525,7 +1546,7 @@ if (false) {
 }
 
 /***/ }),
-/* 32 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1543,15 +1564,15 @@ var _vueRouter = __webpack_require__(5);
 
 var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
-var _pageA = __webpack_require__(33);
+var _pageA = __webpack_require__(29);
 
 var _pageA2 = _interopRequireDefault(_pageA);
 
-var _pageB = __webpack_require__(37);
+var _pageB = __webpack_require__(33);
 
 var _pageB2 = _interopRequireDefault(_pageB);
 
-var _home = __webpack_require__(41);
+var _home = __webpack_require__(37);
 
 var _home2 = _interopRequireDefault(_home);
 
@@ -1582,19 +1603,19 @@ var router = new _vueRouter2.default({
 exports.default = router;
 
 /***/ }),
-/* 33 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageA_vue__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageA_vue__ = __webpack_require__(10);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageA_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageA_vue__);
 /* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageA_vue__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageA_vue__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3d435cda_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_pageA_vue__ = __webpack_require__(36);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3d435cda_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_pageA_vue__ = __webpack_require__(32);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(34)
+  __webpack_require__(30)
 }
 var normalizeComponent = __webpack_require__(2)
 /* script */
@@ -1640,13 +1661,13 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 34 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(35);
+var content = __webpack_require__(31);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -1671,7 +1692,7 @@ if(false) {
 }
 
 /***/ }),
-/* 35 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(false);
@@ -1685,7 +1706,7 @@ exports.push([module.i, "\n.page-a-header {\r\n  background: #ff7b2c;\n}\n.page-
 
 
 /***/ }),
-/* 36 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1807,19 +1828,19 @@ if (false) {
 }
 
 /***/ }),
-/* 37 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageB_vue__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageB_vue__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageB_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageB_vue__);
 /* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageB_vue__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_pageB_vue__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3d272dd8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_pageB_vue__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3d272dd8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_pageB_vue__ = __webpack_require__(36);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(38)
+  __webpack_require__(34)
 }
 var normalizeComponent = __webpack_require__(2)
 /* script */
@@ -1865,13 +1886,13 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 38 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(39);
+var content = __webpack_require__(35);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -1896,7 +1917,7 @@ if(false) {
 }
 
 /***/ }),
-/* 39 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(false);
@@ -1910,7 +1931,7 @@ exports.push([module.i, "\n.page-b-header {\r\n  background: #2c7fff;\n}\n.page-
 
 
 /***/ }),
-/* 40 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2053,19 +2074,19 @@ if (false) {
 }
 
 /***/ }),
-/* 41 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_home_vue__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_home_vue__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_home_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_home_vue__);
 /* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_home_vue__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_home_vue__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_11df266e_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_home_vue__ = __webpack_require__(44);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_11df266e_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_home_vue__ = __webpack_require__(40);
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(42)
+  __webpack_require__(38)
 }
 var normalizeComponent = __webpack_require__(2)
 /* script */
@@ -2111,13 +2132,13 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 42 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(43);
+var content = __webpack_require__(39);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -2142,7 +2163,7 @@ if(false) {
 }
 
 /***/ }),
-/* 43 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(0)(false);
@@ -2156,7 +2177,7 @@ exports.push([module.i, "\n.home-content { padding: 5px;\n}\n.home-content li { 
 
 
 /***/ }),
-/* 44 */
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2205,4 +2226,4 @@ if (false) {
 }
 
 /***/ })
-],[18]);
+],[16]);

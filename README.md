@@ -39,6 +39,7 @@ export default {
 * 左右切换钩子: `vue-page-animation-left`, `vue-page-animation-right`
 * 透明动画钩子: `vue-page-animation-fade` 针对不支持 `history` api 浏览器的简单透明动画
 * 如要强制指定某种动画，可给组件配置 `force-transition-name` 属性，用于指定动画的钩子
+* 通过 `drive-by-url="true"` 可以强制使用 url 来保存页面的位置，对于 `router-view` 再嵌套 `router-view` 的场景，非常实用
 
 对于低性能的机子，强烈建议，都指定 `force-transition-name="vue-page-animation-fade"`，避免左右切换动画，导致页面渲染出现残影、fixed元素错位等问题。
 
